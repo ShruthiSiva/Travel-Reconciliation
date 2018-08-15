@@ -1,23 +1,32 @@
 {
-  "name": "ethereum-reconciliation",
+  "name": "blockchain-prototype",
   "version": "1.0.0",
   "description": "",
-  "main": "InvoiceRetrievalAPI.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ShruthiSiva/Ethereum-reconciliation.git"
-  },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ShruthiSiva/Ethereum-reconciliation/issues"
-  },
-  "homepage": "https://github.com/ShruthiSiva/Ethereum-reconciliation#readme",
   "dependencies": {
-    "exceljs": "^1.4.8",
+    "cli-spinner": "^0.2.8",
+    "crypto-js": "^3.1.9-1",
+    "eth-ecies": "^1.0.3",
+    "ethjs-util": "^0.1.6",
+    "express": "^4.16.3",
+    "fs": "0.0.1-security",
+    "ganache-cli": "^6.1.0",
+    "ipfs-api": "^22.1.0",
+    "ipfs-mini": "^1.1.2",
+    "join-by-keys": "^1.0.0",
+    "js-alert": "^1.0.4",
+    "objects-to-csv": "^1.0.1",
+    "sha256": "^0.2.0",
+    "sleep": "^5.1.1",
+    "solc": "^0.4.24",
+    "truffle-hdwallet-provider": "0.0.3",
+    "utils": "^0.3.1",
+    "web3": "^1.0.0-beta.34",
     "xlsx": "^0.13.0"
   }
 }

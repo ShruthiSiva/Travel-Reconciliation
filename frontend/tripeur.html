@@ -1,0 +1,207 @@
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body>
+
+<div ng-app="myApp" ng-controller="myCtrl">
+
+<form ng-submit="login()" required>
+  <h3>Login:</h3>
+  <input type="password" ng-model="seedPhrase" placeholder="Seed phrase">
+  <button type="submit">Login</button><br>
+  <span ng-show="loading1"> <img src="https://78.media.tumblr.com/tumblr_maljxsn5y11r2u5wzo1_500.gif" style="width:100px;height:54px;"></span>
+  <span ng-show="!loading1">{{authorized}}</span>
+</form>
+<hr></hr>
+
+<form ng-submit="getPNROnDate()">
+  <h3>Get PNRs on Date:</h3>
+  <input type="text" ng-model="DateDate" placeholder="dd-mm-yyyy">
+  <input type="text" ng-model="DateContractAddress" placeholder="Contract address">
+  <input type="password" ng-model="DatePrivateKey" placeholder="Private Key"><br>
+  <button type="submit">Submit</button><br>
+  <span ng-show="loading2"> <img src="https://78.media.tumblr.com/tumblr_maljxsn5y11r2u5wzo1_500.gif" style="width:100px;height:54px;"></span>
+  <span ng-show="!loading2">{{PNRs}}</span>
+</form>
+<hr></hr>
+
+<form ng-submit="getDetailsDatePNR()">
+  <h3>Get PNRs on Date:</h3>
+  <input type="text" ng-model="DetailsDate" placeholder="dd-mm-yyyy">
+  <input type="text" ng-model="DetailsPnr" placeholder="PNR">
+  <input type="text" ng-model="DetailsContractAddress" placeholder="Contract address">
+  <input type="password" ng-model="DetailsPrivateKey" placeholder="Private Key"><br>
+  <button type="submit">Submit</button><br>
+  <span ng-show="loading3"> <img src="https://78.media.tumblr.com/tumblr_maljxsn5y11r2u5wzo1_500.gif" style="width:100px;height:54px;"></span>
+  <span ng-show="!loading3">{{Details}}</span>
+</form>
+<hr></hr>
+
+<form ng-submit="setAccessPermissions()">
+  <h3>Set Access Permissions for:</h3>
+  <input type="text" ng-model="PermissionsAddress" placeholder="Address">
+  <input type="text" ng-model="PermissionsContractAddress" placeholder="Contract address"><br>
+  Allow access permissions to this address? : <input type="checkbox" ng-model="PermissionsValue"><br>
+  <button type="submit">Submit</button><br>
+  <span ng-show="loading4"> <img src="https://78.media.tumblr.com/tumblr_maljxsn5y11r2u5wzo1_500.gif" style="width:100px;height:54px;"></span>
+  <span ng-show="!loading4">{{PermissionsRes}}</span>
+</form>
+<hr></hr>
+
+
+<form ng-submit="makeExcelReport()">
+  <h3>Download Excel Invoice:</h3>
+  <input type="text" ng-model="ExcelDateFrom" placeholder="From date dd/mm/yyyy">
+  <input type="text" ng-model="ExcelDateTo" placeholder="To date dd/mm/yyyy">
+  <input type="text" ng-model="ExcelContractAddress" placeholder="Contract address">
+  <input type="password" ng-model="ExcelPrivateKey" placeholder="Private Key"><br>
+  <button type="submit">Submit</button><br>
+  <span ng-show="loading5"> <img src="https://78.media.tumblr.com/tumblr_maljxsn5y11r2u5wzo1_500.gif" style="width:100px;height:54px;"></span>
+  <span ng-show="!loading5">{{ExcelResult}}</span>
+</form>
+<hr></hr>
+
+
+<form ng-submit="deployContract()">
+  <h3>Deploy new Tripeur contract:</h3>
+  <button type="submit">Deploy</button><br>
+  <span ng-show="loading7"> <img src="https://78.media.tumblr.com/tumblr_maljxsn5y11r2u5wzo1_500.gif" style="width:100px;height:54px;"></span>
+  <span ng-show="!loading7">{{deployed}}</span>
+</form>
+<hr></hr>
+
+<form ng-submit="addTripeurReport()">
+  <h3>Add report to blockchain: </h3>
+  <input type="text" ng-model="ReportPath" placeholder="Report Path">
+  <input type="text" ng-model="ReportContractAddress" placeholder="Contract address">
+  <input type="text" ng-model="ReportPublicKey" placeholder="Key">
+  <button type="submit">Submit</button><br>
+  <span ng-show="loading6"> <img src="https://78.media.tumblr.com/tumblr_maljxsn5y11r2u5wzo1_500.gif" style="width:100px;height:54px;"></span>
+  <span ng-show="!loading6">{{ReportResult}}</span>
+</form>
+<hr></hr>
+
+</div>
+
+</body>
+
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope, $http){
+
+  $scope.login = function() {
+    $scope.loading1 = true;
+    $http({
+      method: "POST",
+      url: "http://localHost:3000/login",
+      data: {seedPhrase: $scope.seedPhrase}
+    }).then((res) => {
+      $scope.loading1 = false;
+      $scope.authorized = `Welcome ${res.data.admin}`
+    });
+  }
+
+  $scope.getPNROnDate = function() {
+    var PNRsOnDateArgs = {
+      date: $scope.DateDate,
+      contractAddress: $scope.DateContractAddress,
+      privateKey: $scope.DatePrivateKey
+    }
+    $scope.loading2 = true;
+    $http({
+      method: "PUT",
+      url: "http://localHost:3000/getPNRs",
+      data: PNRsOnDateArgs
+    }).then((res) => {
+      $scope.loading2 = false;
+      $scope.PNRs = res.data.PNRs;
+    });
+  }
+
+  $scope.getDetailsDatePNR = function() {
+    var getDetailsDatePNRArgs = {
+      date: $scope.DetailsDate,
+      pnr: $scope.DetailsPnr,
+      contractAddress: $scope.DetailsContractAddress,
+      privateKey: $scope.DetailsPrivateKey
+    }
+    $scope.loading3 = true;
+    $http({
+      method: "PUT",
+      url: "http://localHost:3000/getDetails",
+      data: getDetailsDatePNRArgs
+    }).then((res) => {
+      $scope.loading3 = false;
+      $scope.Details = res.data.details;
+    });
+  }
+
+  $scope.setAccessPermissions = function() {
+    if($scope.PermissionsValue == undefined){
+      $scope.PermissionsValue = false;
+    }
+    var getDetailsDatePNRArgs = {
+      address: $scope.PermissionsAddress,
+      contractAddress: $scope.PermissionsContractAddress,
+      value: $scope.PermissionsValue
+    }
+    $scope.loading4 = true;
+    $http({
+      method: "PUT",
+      url: "http://localHost:3000/setAccessPermissions",
+      data: getDetailsDatePNRArgs
+    }).then((res) => {
+      $scope.loading4 = false;
+      $scope.PermissionsRes = res.data.result;
+    });
+  }
+
+  $scope.makeExcelReport = function() {
+    var getDetailsDatePNRArgs = {
+      dateFrom: $scope.ExcelDateFrom,
+      dateTo: $scope.ExcelDateTo,
+      contractAddress: $scope.ExcelContractAddress,
+      privateKey: $scope.ExcelPrivateKey
+    }
+    $scope.loading5 = true;
+    $http({
+      method: "PUT",
+      url: "http://localHost:3000/makeExcelReport",
+      data: getDetailsDatePNRArgs
+    }).then((res) => {
+      $scope.loading5 = false;
+      $scope.ExcelResult = res.data.status;
+    });
+  }
+
+  $scope.addTripeurReport = function() {
+    var TripeurReportDetails = {
+      reportPath: $scope.ReportPath,
+      contractAddress: $scope.ReportContractAddress
+      publicKey: $scope.ReportPublicKey
+    };
+    $scope.loading6 = true;
+    $http({
+      method: "PUT",
+      url: "http://localHost:3000/addTripeurReport",
+      data: TripeurReportDetails
+    }).then((res) => {
+      $scope.loading6 = false;
+      $scope.ReportResult = res.data.status;
+    });
+  }
+
+  $scope.deployContract = function() {
+    $scope.loading7 = true;
+    $http({
+      method: "GET",
+      url: "http://localHost:3000/deployContract"
+    }).then((res) => {
+      $scope.loading7 = false;
+      $scope.deployed = res.data.contractAddress;
+    });
+  }
+
+});
+</script>
+
+</html>

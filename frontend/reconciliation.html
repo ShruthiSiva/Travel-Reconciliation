@@ -1,0 +1,149 @@
+<!-- simplehttpserver  -->
+
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body>
+
+<div ng-app="myApp" ng-controller="myCtrl">
+
+<form  ng-submit="submitForm()">
+  <h3>Enter paths:</h3>
+  <p>Tripeur Path : <input type="text" ng-model="tripeurPath" placeholder="Tripeur path">
+  TBO Path : <input type="text" ng-model="tboPath" placeholder="TBO path"></p> <br>
+  <button type="submit" value="SubmitPath">Submit</button>
+</form>
+{{mess}}
+<hr></hr>
+
+<form>
+  <h3>Set args:</h3>
+
+  <p ng-repeat="arg in args" >
+  Tripeur Arg : <input type="text" ng-model="arg.TripeurArg" value="arg.TripeurArg" ng-disabled="arg.id != undefined" required>
+  TBO Arg : <input type="text" ng-model="arg.AirlineArg" value="arg.AirlineArg" ng-disabled="arg.id != undefined" required>
+  Key: <input type="text" ng-model="arg.key" value="arg.key" ng-disabled="arg.id != undefined" required>
+  <button ng-click="deleteArg(arg.id)">Delete</button>
+  </p> <br>
+
+  <button ng-click="addArg()">Add</button>
+  <button type="submit" value="SubmitArgs" ng-click="submitFormArgs()">Submit</button>
+</form>
+<h4>Submitted Aruguments:</h4>
+<span ng-repeat="arg in args">{{arg}}<br></span>
+<hr></hr>
+<button ng-click="reconcile()">RECONCILE</button><br>
+<span ng-show="showLoader"> <img src="https://78.media.tumblr.com/tumblr_maljxsn5y11r2u5wzo1_500.gif" style="width:100px;height:54px;"></span>
+<span ng-show="!showLoader">{{report}}</span>
+</div>
+</body>
+
+
+
+
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope, $http){
+
+  $scope.submitForm = function() {
+    $http({
+    method: 'POST',
+    url: 'http://localHost:3000/api/paths',
+    data: { tripeurPath: $scope.tripeurPath, tboPath: $scope.tboPath }
+  }).then((res) => {
+      $scope.mess = res.data.message;
+    });
+  }
+
+
+
+  $http({
+    method: 'GET',
+    url: 'http://localHost:3000/api/args'
+  }).then((res) => {
+    $scope.args = res.data;
+  });
+
+
+
+  $scope.submitFormArgs = function() {
+    var a = $scope.args;
+    if($scope.args[Object.keys(a).length - 1].TripeurArg === undefined && $scope.args[Object.keys(a).length - 1].AirlineArg === undefined && $scope.args[Object.keys(a).length - 1].key === undefined){
+      return;
+    }
+    $http({
+    method: 'PUT',
+    url: 'http://localHost:3000/api/args/addArgs',
+    data: {
+      TripeurArg: $scope.args[Object.keys($scope.args).length - 1].TripeurArg
+      , AirlineArg: $scope.args[Object.keys($scope.args).length - 1].AirlineArg
+      , key: $scope.args[Object.keys($scope.args).length - 1].key
+    }
+    }).then((res) => {
+      $scope.message = res.data;
+
+      $http({
+        method: 'GET',
+        url: 'http://localHost:3000/api/args'
+      }).then((res2) => {
+        $scope.args = res2.data;
+      });
+    });
+  }
+
+
+
+  $scope.addArg = function() {
+    var a = $scope.args;
+    //console.log($scope.args[Object.keys(a).length - 1])
+    if($scope.args[Object.keys(a).length - 1].TripeurArg != undefined && $scope.args[Object.keys(a).length - 1].AirlineArg != undefined && $scope.args[Object.keys(a).length - 1].key != undefined){
+
+
+      $scope.args[Object.keys(a).length] = {};
+    }else{
+      return;
+    }
+  }
+
+
+
+  $scope.deleteArg = function(index) {
+    $http({
+      method: 'DELETE',
+      url: `http://localHost:3000/api/args/delete/${index}`
+    }).then((res) => {
+      $scope.argDeletedRes = res;
+
+      $http({
+        method: 'GET',
+        url: 'http://localHost:3000/api/args'
+      }).then((res2) => {
+        $scope.args = res2.data;
+      });
+    });
+  }
+
+
+
+  $scope.reconcile = function() {
+    $scope.showLoader = true;
+    $http({
+      method: 'PUT',
+      url: 'http://localHost:3000/api/getExcel',
+      data: {
+        tripeur: $scope.tripeurPath,
+        tbo: $scope.tboPath,
+        argument: {"args": $scope.args}
+      }
+    }).then((res) => {
+      if(res.data){
+        $scope.showLoader = false;
+        $scope.report='Succesfully created report';
+      }
+    });
+  }
+
+});
+
+
+</script>
+</html>
