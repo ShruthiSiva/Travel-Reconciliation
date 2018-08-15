@@ -1,0 +1,23 @@
+{
+  "name": "ethereum-reconciliation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "InvoiceRetrievalAPI.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShruthiSiva/Ethereum-reconciliation.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ShruthiSiva/Ethereum-reconciliation/issues"
+  },
+  "homepage": "https://github.com/ShruthiSiva/Ethereum-reconciliation#readme",
+  "dependencies": {
+    "exceljs": "^1.4.8",
+    "xlsx": "^0.13.0"
+  }
+}
